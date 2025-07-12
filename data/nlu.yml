@@ -1,0 +1,126 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - moin
+    - hey there
+    - let's go
+    - hey dude
+    - goodmorning
+    - goodevening
+    - good afternoon
+
+- intent: goodbye
+  examples: |
+    - cu
+    - good by
+    - cee you later
+    - good night
+    - bye
+    - goodbye
+    - have a nice day
+    - see you around
+    - bye bye
+    - see you later
+
+- intent: affirm
+  examples: |
+    - yes
+    - y
+    - indeed
+    - of course
+    - that sounds good
+    - correct
+
+- intent: deny
+  examples: |
+    - no
+    - n
+    - never
+    - I don't think so
+    - don't like that
+    - no way
+    - not really
+
+- intent: mood_great
+  examples: |
+    - perfect
+    - great
+    - amazing
+    - feeling like a king
+    - wonderful
+    - I am feeling very good
+    - I am great
+    - I am amazing
+    - I am going to save the world
+    - super stoked
+    - extremely good
+    - so so perfect
+    - so good
+    - so perfect
+
+- intent: mood_unhappy
+  examples: |
+    - my day was horrible
+    - I am sad
+    - I don't feel very well
+    - I am disappointed
+    - super sad
+    - I'm so sad
+    - sad
+    - very sad
+    - unhappy
+    - not good
+    - not very good
+    - extremly sad
+    - so saad
+    - so sad
+
+- intent: bot_challenge
+  examples: |
+    - are you a bot?
+    - are you a human?
+    - am I talking to a bot?
+    - am I talking to a human?
+
+
+- intent: submit_complaint
+  examples: |
+    - My toilet will not flush
+    - The lights are not working
+    - I have a power outage
+    - Someone tried to break in
+    - The garbage is not collected
+    - The window is stuck
+    - The door does not close properly
+    - The thermostat is broken
+
+- intent: provide_details
+  examples: |
+    - The toilet has been blocked since last night and nothing goes down when I flush.
+    - None of the lights in the living room are turning on, even after I changed the bulbs.
+    - The power has been out in the kitchen for two hours and I can't use any appliances.
+    - Someone forced the main door lock and now it does not close properly.
+    - The garbage has not been collected from the hallway for three days and it smells bad.
+    - The bedroom window will not open no matter how hard I try, and it seems jammed.
+    - The front door does not close completely and leaves a gap even when locked.
+    - The thermostat screen is blank and the heater does not respond to any settings.
+    - I have noticed water leaking from the ceiling in the bathroom and it is getting worse.
+    - The switch near the fridge sparks every time I turn it on, which is dangerous.
+    - The AC is making a strange noise and blowing warm air instead of cold.
+    - The intercom has not been working for a week, I can not buzz guests in.
+    - There is mold growing around the window due to constant humidity.
+    
+- intent: upload_attachment
+  examples: |
+    -Here is a picture 
+    -Here is the video of the problem
+    -I am sending you a picture
+    
