@@ -111,11 +111,6 @@ nlu:
     - The garbage has not been collected from the hallway for three days and it smells bad.
     - The bedroom window will not open no matter how hard I try, and it seems jammed.
     - The front door does not close completely and leaves a gap even when locked.
-    - The thermostat screen is blank and the heater does not respond to any settings.
-    - I have noticed water leaking from the ceiling in the bathroom and it is getting worse.
-    - The switch near the fridge sparks every time I turn it on, which is dangerous.
-    - The AC is making a strange noise and blowing warm air instead of cold.
-    - The intercom has not been working for a week, I can not buzz guests in.
     - There is mold growing around the window due to constant humidity.
     
 - intent: upload_attachment
@@ -123,4 +118,39 @@ nlu:
     -Here is a picture 
     -Here is the video of the problem
     -I am sending you a picture
+
+- intent: ask_status
+  examples: |
+    - What is the status of my complaint?
+    - I want to know the current state of my complaint
+    - Can you tell me the progress of my request?
+    - Where is my request at?
+    - Is there any update on my complaint?
+    - Can you give me the status of my request?
+    - I would like to check the status of my complaint
+    - What's going on with my ticket?
+    - What happened with my last complaint?
+    - Has my request been processed?
+    - What is the progress on my issue?
+    - How is my complaint being handled?
+    - What is the follow-up on my request?^
+    - Please give me an update on my complaint
+    - Can I know the complaint status?
+    - Any news about my ticket?
+    - Where does my complaint stand?
+    - What is the situation of my complaint?
+    - Tell me about the resolution status of my problem
+    - I want to check my complaint status
+
+- intent: provide_complaint_id
+  examples: |
+    - My complaint number is [123](complaint_id)
+    - The ticket [4](complaint_id)
+    - The number is [789](complaint_id)
+    - [101112](complaint_id)
+
+
+
+
+
     

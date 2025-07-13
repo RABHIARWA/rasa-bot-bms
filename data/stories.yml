@@ -43,4 +43,9 @@ stories:
   - action: utter_confirm_submission
 
 
-
+- story: check complaint status
+  steps: 
+  - intent: ask_status
+  - action: utter_ask_complaint_id
+  - intent: provide_complaint_id
+  - action: action_check_status_complaint

@@ -11,8 +11,24 @@ intents:
   - submit_complaint
   - provide_details
   - upload_attachment
+  - ask_status
+  - provide_complaint_id
+
+entities:
+  - complaint_id
+
+slots:
+  complaint_id:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: complaint_id
+
 actions: 
  - action_save_complaint
+ - action_check_status_complaint
+ 
  
 responses:
   utter_greet:
@@ -45,6 +61,11 @@ responses:
   
   utter_confirm_submission: 
   - text: "Your request has been saved. We will inform you as soon as we review your request"
+
+  utter_ask_complaint_id:
+    - text: "Please provide your complaint ID so I can check the status."
+
+ 
 
 session_config:
   session_expiration_time: 60

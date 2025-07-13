@@ -60,3 +60,58 @@ class ActionSaveComplaint(Action):
             cursor.close()
             conn.close()
         return []
+
+
+class ActionCheckStatusComplaint(Action):
+    def name(self):
+        return "action_check_status_complaint"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker, domain):
+        complaint_id = tracker.get_slot("complaint_id")
+
+        if not complaint_id:
+            dispatcher.utter_message("Please provide the complaint ID.")
+            return []
+
+        try:
+            
+            conn = mysql.connector.connect(
+                host="localhost",
+                database="bms_ged",
+                user="root",
+                password=""
+            )
+            cursor = conn.cursor()
+
+            #get the status
+            query = "SELECT compl_job_status FROM complains WHERE compl_id = %s"
+            cursor.execute(query, (complaint_id,))
+            result = cursor.fetchone()
+
+            if result:
+                status_code = result[0]
+                status_map = {
+                    0: "Pending",
+                    1: "In progress",
+                    2: "Resolved"
+                }
+                status_text = status_map.get(status_code, "Unknown")
+
+                dispatcher.utter_message(
+                    f"The status of complaint {complaint_id} is: {status_text}."
+                )
+            else:
+                dispatcher.utter_message(
+                    f"No complaint found with ID {complaint_id}."
+                )
+
+        except Exception as e:
+            dispatcher.utter_message(
+                f"Error accessing the database: {e}"
+            )
+
+        finally:
+            cursor.close()
+            conn.close()
+
+        return []
