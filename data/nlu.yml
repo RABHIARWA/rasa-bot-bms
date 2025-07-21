@@ -1,5 +1,4 @@
 version: "3.1"
-
 nlu:
 - intent: greet
   examples: |
@@ -16,7 +15,6 @@ nlu:
     - goodmorning
     - goodevening
     - good afternoon
-
 - intent: goodbye
   examples: |
     - cu
@@ -29,7 +27,6 @@ nlu:
     - see you around
     - bye bye
     - see you later
-
 - intent: affirm
   examples: |
     - yes
@@ -38,7 +35,6 @@ nlu:
     - of course
     - that sounds good
     - correct
-
 - intent: deny
   examples: |
     - no
@@ -48,7 +44,6 @@ nlu:
     - don't like that
     - no way
     - not really
-
 - intent: mood_great
   examples: |
     - perfect
@@ -65,7 +60,6 @@ nlu:
     - so so perfect
     - so good
     - so perfect
-
 - intent: mood_unhappy
   examples: |
     - my day was horrible
@@ -82,15 +76,12 @@ nlu:
     - extremly sad
     - so saad
     - so sad
-
 - intent: bot_challenge
   examples: |
     - are you a bot?
     - are you a human?
     - am I talking to a bot?
     - am I talking to a human?
-
-
 - intent: submit_complaint
   examples: |
     - My toilet will not flush
@@ -104,21 +95,27 @@ nlu:
 
 - intent: provide_details
   examples: |
-    - The toilet has been blocked since last night and nothing goes down when I flush.
-    - None of the lights in the living room are turning on, even after I changed the bulbs.
-    - The power has been out in the kitchen for two hours and I can't use any appliances.
-    - Someone forced the main door lock and now it does not close properly.
-    - The garbage has not been collected from the hallway for three days and it smells bad.
-    - The bedroom window will not open no matter how hard I try, and it seems jammed.
-    - The front door does not close completely and leaves a gap even when locked.
-    - There is mold growing around the window due to constant humidity.
+    - [Toilet blocked](compl_title) since last night. [Nothing goes down when I flush](compl_description).
+    - [Lights not working](compl_title) in the living room. [Even after changing bulbs](compl_description).
+    - [Power outage](compl_title) in the kitchen. [No appliance works for two hours](compl_description).
+    - [Main door lock forced](compl_title). [Does not close properly now](compl_description).
+    - [Garbage not collected](compl_title) in the hallway. [Smells bad for three days](compl_description).
+    - [Bedroom window jammed](compl_title). [Won't open no matter how hard I try](compl_description).
+    - [Front door gap](compl_title). [Does not close fully even when locked](compl_description).
+    - [Mold near window](compl_title). [Due to constant humidity](compl_description).
     
 - intent: upload_attachment
   examples: |
-    -Here is a picture 
-    -Here is the video of the problem
-    -I am sending you a picture
-
+    - Here is a picture
+    - Here is the video of the problem
+    - I am sending you a picture
+    - I want to upload a photo
+    - Uploading a video now
+    - Please see this photo
+    - I have attached an image
+    - Look at this video
+    - Sending you the picture now
+    - Here is a file
 - intent: ask_status
   examples: |
     - What is the status of my complaint?
@@ -133,7 +130,7 @@ nlu:
     - Has my request been processed?
     - What is the progress on my issue?
     - How is my complaint being handled?
-    - What is the follow-up on my request?^
+    - What is the follow-up on my request?
     - Please give me an update on my complaint
     - Can I know the complaint status?
     - Any news about my ticket?
@@ -148,9 +145,8 @@ nlu:
     - The ticket [4](complaint_id)
     - The number is [789](complaint_id)
     - [101112](complaint_id)
-
-
-
-
-
-    
+    - [Power outage](compl_title) in apartment 8. [No electricity since yesterday](compl_description).
+    - [Water leak](compl_title) in the bathroom. [The pipe is leaking heavily](compl_description).
+    - [Broken heater](compl_title). [It doesn’t turn on anymore](compl_description).
+    - [No hot water](compl_title) since this morning. [I can't shower](compl_description).
+    - I have a [window issue](compl_title). [The window doesn't close and it's cold](compl_description).

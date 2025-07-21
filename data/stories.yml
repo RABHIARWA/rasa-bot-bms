@@ -36,6 +36,7 @@ stories:
   - intent: submit_complaint
   - action: utter_give_details_complaint
   - intent: provide_details
+  
   - action: utter_ask_upload
   - intent: upload_attachment
   - action: utter_accept_upload
@@ -49,3 +50,16 @@ stories:
   - action: utter_ask_complaint_id
   - intent: provide_complaint_id
   - action: action_check_status_complaint
+
+#- story: interactive_story_1
+ # steps:
+  #- intent: greet
+  #- action: utter_greet
+  #- intent: submit_complaint
+  #- action: utter_give_details_complaint
+  #- intent: provide_details
+  #- action: utter_ask_upload
+  #- intent: upload_attachment
+  #- action: utter_accept_upload
+  #- action: action_save_complaint
+  #- action: utter_confirm_submission

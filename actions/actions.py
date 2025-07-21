@@ -39,7 +39,14 @@ class ActionSaveComplaint(Action):
         return "action_save_complaint"
 
     def run(self, dispatcher, tracker, domain):
-        msg = tracker.latest_message.get("text")
+        #msg = tracker.latest_message.get("text")
+
+        compl_title = tracker.get_slot("compl_title")
+        compl_description = tracker.get_slot("compl_description")  
+        compl_type = self.get_complaint_type(compl_description)  #Analyse automatique du type de réclamation
+        if not compl_title or not compl_description:
+         dispatcher.utter_message("Please provide complete complaint details.")
+         return []
         try:
             conn = mysql.connector.connect(host="localhost", database="bms_ged", user="root", password="")
             cursor = conn.cursor()
@@ -48,18 +55,30 @@ class ActionSaveComplaint(Action):
                 compl_description, compl_date, compl_job_status,
                 compl_assigned_to, compl_solution, compl_complainBy,
                 compl_pictures, compl_email, compl_phone, created_at, updated_at)
-                VALUES (1,1,'TypeA','Réclamation',%s,CURDATE(),0,
+                VALUES (1,1,%s,%s,%s,CURDATE(),0,
                         'Personne','','Utilisateur','[]',NULL,NULL,NOW(),NOW())
             """
-            cursor.execute(query, (msg,))
+            cursor.execute(query, (compl_type, compl_title, compl_description))
             conn.commit()
-            dispatcher.utter_message("Réclamation enregistrée.")
+            dispatcher.utter_message("Complaint saved.")
+
         except Exception as e:
             dispatcher.utter_message(f" Erreur : {e}")
         finally:
             cursor.close()
             conn.close()
         return []
+
+    def get_complaint_type(self, description):
+        description = (description or "").lower()
+        if "water" in description or "leak" in description:
+            return "Plomberie"
+        elif "electric" in description or "light" in description:
+            return "Électricité"
+        elif "door" in description or "security" in description:
+            return "Sécurité"
+        else:
+            return "Autre"
 
 
 class ActionCheckStatusComplaint(Action):

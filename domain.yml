@@ -1,72 +1,84 @@
-version: "3.1"
-
+version: '3.1'
 intents:
-  - greet
-  - goodbye
-  - affirm
-  - deny
-  - mood_great
-  - mood_unhappy
-  - bot_challenge
-  - submit_complaint
-  - provide_details
-  - upload_attachment
-  - ask_status
-  - provide_complaint_id
+- affirm
+- ask_status
+- bot_challenge
+- deny
+- goodbye
+- greet
+- mood_great
+- mood_unhappy
+- provide_complaint_id
+- provide_details
+- submit_complaint
+- upload_attachment
 
 entities:
-  - complaint_id
+- complaint_id
+- compl_title
+- compl_description
 
 slots:
   complaint_id:
     type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: complaint_id
+      
+  compl_title:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: compl_title
+
+  compl_type:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: compl_type   
+
+  compl_description:
+    type: text
     influence_conversation: true
     mappings:
       - type: from_entity
-        entity: complaint_id
+        entity: compl_description
+actions:
+- utter_give_details_complaint
+- utter_greet
+- utter_confirm_submission
+- utter_accept_upload
+- action_save_complaint
+- utter_ask_upload
+- action_check_status_complaint
 
-actions: 
- - action_save_complaint
- - action_check_status_complaint
- 
- 
+
 responses:
   utter_greet:
-  - text: "Hey! How are you?"
-
+  - text: Hey! How are you?
   utter_cheer_up:
-  - text: "Here is something to cheer you up:"
-    image: "https://i.imgur.com/nGF1K8f.jpg"
-
+  - text: 'Here is something to cheer you up:'
+    image: https://i.imgur.com/nGF1K8f.jpg
   utter_did_that_help:
-  - text: "Did that help you?"
-
+  - text: Did that help you?
   utter_happy:
-  - text: "Great, carry on!"
-
+  - text: Great, carry on!
   utter_goodbye:
-  - text: "Bye"
-
+  - text: Bye
   utter_iamabot:
-  - text: "I am a bot, powered by Rasa."
-  
+  - text: I am a bot, powered by Rasa.
   utter_give_details_complaint:
-  - text: "Can you give more information regarding the problem?"
-
+  - text: Can you give more information regarding the problem?
   utter_ask_upload:
-  - text: "Would you like to attach a photo or a video of the problem?"
-  
-  utter_accept_upload: 
-  - text: "Thank you! This will help better understand the problem"
-  
-  utter_confirm_submission: 
-  - text: "Your request has been saved. We will inform you as soon as we review your request"
-
+  - text: Would you like to attach a photo or a video of the problem?
+  utter_accept_upload:
+  - text: Thank you! This will help better understand the problem
+  utter_confirm_submission:
+  - text: Your request has been saved. We will inform you as soon as we review your request
   utter_ask_complaint_id:
-    - text: "Please provide your complaint ID so I can check the status."
-
- 
-
+  - text: Please provide your complaint ID so I can check the status.
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
