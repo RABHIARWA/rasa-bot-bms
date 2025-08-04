@@ -33,6 +33,8 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 import mysql.connector
 from datetime import datetime
+import base64
+import requests
 
 class ActionSaveComplaint(Action):
     def name(self):
@@ -42,11 +44,15 @@ class ActionSaveComplaint(Action):
         #msg = tracker.latest_message.get("text")
 
         compl_title = tracker.get_slot("compl_title")
-        compl_description = tracker.get_slot("compl_description")  
+        compl_description = tracker.get_slot("compl_description") 
+        compl_pictures = tracker.get_slot("compl_pictures") 
         compl_type = self.get_complaint_type(compl_description)  #Analyse automatique du type de réclamation
         if not compl_title or not compl_description:
          dispatcher.utter_message("Please provide complete complaint details.")
          return []
+    
+        if not compl_pictures:
+            compl_pictures = "[]"
         try:
             conn = mysql.connector.connect(host="localhost", database="bms_ged", user="root", password="")
             cursor = conn.cursor()
@@ -56,9 +62,9 @@ class ActionSaveComplaint(Action):
                 compl_assigned_to, compl_solution, compl_complainBy,
                 compl_pictures, compl_email, compl_phone, created_at, updated_at)
                 VALUES (1,1,%s,%s,%s,CURDATE(),0,
-                        'Personne','','Utilisateur','[]',NULL,NULL,NOW(),NOW())
+                        'Personne','','Utilisateur',%s,NULL,NULL,NOW(),NOW())
             """
-            cursor.execute(query, (compl_type, compl_title, compl_description))
+            cursor.execute(query, (compl_type, compl_title, compl_description, compl_pictures))
             conn.commit()
             dispatcher.utter_message("Complaint saved.")
 
@@ -132,5 +138,24 @@ class ActionCheckStatusComplaint(Action):
         finally:
             cursor.close()
             conn.close()
+
+        return []
+    
+class ActionHandleImage(Action):
+    def name(self) -> str:
+        return "action_handle_image"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: dict) -> List[Dict[Text, Any]]:
+        
+        custom = tracker.latest_message.get("custom", {})
+        image_data = custom.get("image_data")
+        file_name = custom.get("file_name")
+
+        if image_data:
+            dispatcher.utter_message(text=f"Image '{file_name}' received!")
+        else:
+            dispatcher.utter_message(text="No image received.")
 
         return []

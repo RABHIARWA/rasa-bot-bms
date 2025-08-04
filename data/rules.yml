@@ -39,14 +39,18 @@ rules:
   - intent: greet
   - action: utter_greet
 
-- rule: Accept upload and save complaint after attachment
+#- rule: Accept upload and save complaint after attachment
+ # steps:
+  #- intent: upload_attachment
+  #- action: utter_accept_upload
+  #- action: action_save_complaint
+  #- action: utter_confirm_submission
+
+
+- rule: handle image upload
   steps:
-  - intent: upload_attachment
-  - action: utter_accept_upload
-  - action: action_save_complaint
-  - action: utter_confirm_submission
-
-
+  - intent: image_upload
+  - action: action_handle_image
 
 
 

@@ -13,10 +13,12 @@ intents:
 - submit_complaint
 - upload_attachment
 
+
 entities:
 - complaint_id
 - compl_title
 - compl_description
+- image
 
 slots:
   complaint_id:
@@ -45,6 +47,11 @@ slots:
     mappings:
       - type: from_entity
         entity: compl_description
+
+ 
+  
+
+
 actions:
 - utter_give_details_complaint
 - utter_greet
@@ -52,7 +59,11 @@ actions:
 - utter_accept_upload
 - action_save_complaint
 - utter_ask_upload
+- action_extract_image
 - action_check_status_complaint
+- action_check_if_simple
+- action_store_complaint
+
 
 
 responses:
@@ -72,7 +83,11 @@ responses:
   utter_give_details_complaint:
   - text: Can you give more information regarding the problem?
   utter_ask_upload:
-  - text: Would you like to attach a photo or a video of the problem?
+  - text: "Would you like to attach a photo or a video of the problem?"
+  utter_ask_upload_instruction:
+  - text: "Please upload the image or video using the 📎 button below."
+  utter_thanks_upload:
+  - text: "Thanks for the media! We'll take a closer look."
   utter_accept_upload:
   - text: Thank you! This will help better understand the problem
   utter_confirm_submission:

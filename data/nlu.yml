@@ -150,3 +150,7 @@ nlu:
     - [Broken heater](compl_title). [It doesn’t turn on anymore](compl_description).
     - [No hot water](compl_title) since this morning. [I can't shower](compl_description).
     - I have a [window issue](compl_title). [The window doesn't close and it's cold](compl_description).
+
+- intent: image_upload
+  examples: |
+      - Uploaded an image

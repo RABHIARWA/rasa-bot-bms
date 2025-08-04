@@ -1,19 +1,70 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HTML Example</title>
-    <script
-      type="module"
-      src="https://unpkg.com/@rasahq/chat-widget-ui/dist/rasa-chatwidget/rasa-chatwidget.esm.js"
-    ></script>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/@rasahq/chat-widget-ui/dist/rasa-chatwidget/rasa-chatwidget.css"
-    />
-  </head>
-  <body>
-    <rasa-chatbot-widget server-url="http://localhost:3000" socket-path="/socket.io/" init-payload="/greet" display-timestamp="true" widget-title="BMS Assistant"></rasa-chatbot-widget>
-  </body>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chatbot avec bouton Upload intégré</title>
+  <script src="https://cdn.jsdelivr.net/npm/@rasahq/rasa-chat-widget@1.0.1/lib/index.min.js"></script>
+  <style>
+    /* Bouton upload collé à la zone de saisie du widget */
+    #upload-label {
+      position: fixed;
+      right: 22px;
+      bottom: 65px; /* Ajuste la hauteur pour coller au champ texte */
+      background: #1976d2;
+      color: white;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 10000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      user-select: none;
+    }
+    #upload-label:hover {
+      background: #115293;
+    }
+    #file-input {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Bouton upload superposé -->
+  <label id="upload-label" for="file-input" title="Envoyer une image">📎</label>
+  <input type="file" id="file-input" accept="image/*" />
+
+  <script>
+    window.addEventListener("load", function () {
+      const WebChat = window.WebChat.default;
+
+      WebChat.init({
+        initPayload: "/greet",
+        socketUrl: "http://localhost:5005",  // Mets ici l'adresse de ton serveur Rasa
+        title: "Assistant",
+        subtitle: "Je peux recevoir vos images 📷",
+        inputTextFieldHint: "Tapez votre message...",
+        showFullScreenButton: false,
+      });
+
+      document.getElementById("file-input").addEventListener("change", async function (event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const base64 = e.target.result;
+          window.WebChat.send({
+            message: "Image envoyée",
+            custom: {
+              image_data: base64,
+              file_name: file.name
+            }
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+  </script>
+</body>
 </html>

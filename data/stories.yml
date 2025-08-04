@@ -29,27 +29,33 @@ stories:
   - intent: deny
   - action: utter_goodbye
 
-- story: Submit_a_complaint
+#- story: Submit_a_complaint
+ # steps:
+  #- intent: greet
+  #- action: utter_greet
+  #- intent: submit_complaint
+  #- action: utter_give_details_complaint
+  #- intent: provide_details
+  #- action: utter_ask_upload
+  #- intent: upload_attachment
+  ##- action: utter_accept_upload
+  #- action: action_save_complaint
+  #- action: utter_confirm_submission
+
+- story: Submit complaint with image saved
   steps:
   - intent: greet
   - action: utter_greet
   - intent: submit_complaint
   - action: utter_give_details_complaint
   - intent: provide_details
-  
   - action: utter_ask_upload
   - intent: upload_attachment
-  - action: utter_accept_upload
-  - action: action_save_complaint
-  - action: utter_confirm_submission
+  - action: action_extract_image     
+  - action: action_save_complaint     
+  - action: utter_thanks_upload       
+  - action: utter_confirm_submission 
 
-
-- story: check complaint status
-  steps: 
-  - intent: ask_status
-  - action: utter_ask_complaint_id
-  - intent: provide_complaint_id
-  - action: action_check_status_complaint
 
 #- story: interactive_story_1
  # steps:
@@ -63,3 +69,5 @@ stories:
   #- action: utter_accept_upload
   #- action: action_save_complaint
   #- action: utter_confirm_submission
+
+
