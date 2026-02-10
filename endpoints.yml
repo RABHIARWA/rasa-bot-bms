@@ -3,27 +3,47 @@
 # Server where the models are pulled from.
 # https://rasa.com/docs/rasa/model-storage#fetching-models-from-a-server
 
-#models:
+cors:
+  origins:
+   - "http://localhost:8000"
+   - "http://127.0.0.1:8000"
 #  url: http://my-server.com/models/default_core@latest
 #  wait_time_between_pulls:  10   # [optional](default: 100)
+
+action_endpoint: 
+  actions_module: "actions"
+  
+model_groups:
+  - id: gpt-4o-mini
+    models:
+      - provider: openai
+        model: gpt-4o-mini
+        timeout: 7
+        temperature: 0.0
+nlg:
+  type: rephrase
+  llm:
+    model_group: gpt-4o-mini
+
 
 # Server which runs your custom actions.
 # https://rasa.com/docs/rasa/custom-actions
 
-action_endpoint:
-  url: "http://localhost:5055/webhook"
+
 
 # Tracker store which is used to store the conversations.
 # By default the conversations are stored in memory.
 # https://rasa.com/docs/rasa/tracker-stores
 
 #tracker_store:
-#    type: redis
-#    url: <host of the redis instance, e.g. localhost>
-#    port: <port of your redis instance, usually 6379>
-#    db: <number of your database within redis, e.g. 0>
-#    password: <password used for authentication>
-#    use_ssl: <whether or not the communication is encrypted, default false>
+ # type: SQL
+  #dialect: "mysql+pymysql"
+  #url: "localhost"
+  #port: 3306
+  ##username: "root"
+  #password: 
+  #db: "bms_ged"
+
 
 #tracker_store:
 #    type: mongod

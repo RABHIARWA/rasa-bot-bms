@@ -1,6 +1,6 @@
 # rasa-bot-bms
 
-A conversational AI assistant built using Rasa CALM embedded within a web-based BMS platform (Business Management System).
+A Rasa Pro conversational AI bot for BMS (Business Management System).
 
 ## Prerequisites
 

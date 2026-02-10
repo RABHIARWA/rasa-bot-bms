@@ -1,0 +1,138 @@
+version: "3.1"
+
+flows:
+  submit_complaint_flow:
+    description: "Collect complaint details, suggest solution, then submit based on user satisfaction."
+
+    steps:
+      - action: utter_start_complaint
+      - collect: "complaint_title"
+      - collect: "complaint_description"
+      - collect: "complaint_type"
+
+      # ===== IMAGE UPLOAD (RESTORED ORIGINAL LOGIC) =====
+      - collect: "want_upload"
+        utter: utter_ask_upload_image
+        ask_before_filling: true
+        next:
+          - if: "slots.want_upload is true"
+            then: request_image_upload
+          - else: propose_solution
+
+      - id: request_image_upload
+        action: utter_request_image_upload
+        next: collect_image_flag
+
+      - id: collect_image_flag
+        collect: "image_uploaded"
+        ask_before_filling: true
+        next:
+          - if: "slots.image_uploaded is true"
+            then: extract_image
+          - else: propose_solution
+
+      - id: extract_image
+        action: action_extract_image_from_metadata
+        next: validate_image_match     # ✅ NEW
+
+      # ✅ NEW: VALIDATE IMAGE VS DESCRIPTION
+      - id: validate_image_match
+        action: action_validate_image_matches_description
+        next:
+          - if: "slots.image_match is true"
+            then: propose_solution
+          - else: ask_keep_or_reupload
+
+      - id: ask_keep_or_reupload
+        collect: "confirm_use_image"
+        utter: utter_ask_confirm_use_image
+        ask_before_filling: true
+        next:
+          - if: "slots.confirm_use_image is true"
+            then: propose_solution
+          - else: reset_image_and_reupload
+
+      - id: reset_image_and_reupload
+        action: action_reset_uploaded_image
+        next: request_image_upload
+
+      # ===== PROPOSE LLM SOLUTION =====
+      - id: propose_solution
+        action: action_propose_complaint_solution
+        next: display_solution
+
+      - id: display_solution
+        action: utter_display_solution
+        next: ask_solution_satisfactory
+
+      # ===== ASK IF SOLUTION IS SATISFACTORY =====
+      - id: ask_solution_satisfactory
+        collect: "solution_satisfactory"
+        utter: utter_ask_solution_satisfactory
+        ask_before_filling: true
+        next:
+          - if: "slots.solution_satisfactory is true"
+            then: submit_resolved
+          - else: fetch_employees
+
+      # ===== PATH A: Submit as RESOLVED =====
+      - id: submit_resolved
+        action: action_submit_complaint_resolved
+        next: done
+
+      # ===== PATH B: Submit as PENDING =====
+      - id: fetch_employees
+        action: action_fetch_employees_and_wait
+
+      - id: collect_selected_employee_name
+        collect: "selected_employee_name"
+        next:
+          - if: "slots.selected_employee_name"
+            then: lock_selected_employee
+          - else: fetch_employees
+
+      - id: lock_selected_employee
+        action: action_select_employee
+        next: show_summary_pending
+
+      - id: show_summary_pending
+        action: action_summarize_complaint
+        next: confirm_submit_pending
+
+      - id: confirm_submit_pending
+        collect: "confirm_submit"
+        utter: utter_confirm_submit
+        ask_before_filling: true
+        next:
+          - if: "slots.confirm_submit is true"
+            then: submit_pending
+          - else: cancel
+
+      - id: submit_pending
+        action: action_submit_complaint_pending
+        next: done
+
+      # ===== END =====
+      - id: done
+        action: utter_submit_done
+        next: END
+
+      - id: cancel
+        action: utter_cancel_submission
+        next: END
+
+  view_my_complaints:
+    description: User wants to see all their complaints
+    steps:
+      - collect: complaint_count
+        ask_before_filling: false
+      - action: action_list_user_complaints
+
+
+  check_complaint_status:
+    description: "Check status of a specific complaint by ID"
+    steps:
+      - collect: complaint_id
+        utter: utter_ask_complaint_id
+      - action: action_check_complaint_status
+

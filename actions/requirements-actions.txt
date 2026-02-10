@@ -1,0 +1,6 @@
+rasa-sdk
+pymysql
+sqlalchemy
+requests
+openai
+boto3

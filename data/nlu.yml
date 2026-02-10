@@ -1,156 +1,77 @@
 version: "3.1"
+
 nlu:
-- intent: greet
-  examples: |
-    - hey
-    - hello
-    - hi
-    - hello there
-    - good morning
-    - good evening
-    - moin
-    - hey there
-    - let's go
-    - hey dude
-    - goodmorning
-    - goodevening
-    - good afternoon
-- intent: goodbye
-  examples: |
-    - cu
-    - good by
-    - cee you later
-    - good night
-    - bye
-    - goodbye
-    - have a nice day
-    - see you around
-    - bye bye
-    - see you later
-- intent: affirm
-  examples: |
-    - yes
-    - y
-    - indeed
-    - of course
-    - that sounds good
-    - correct
-- intent: deny
-  examples: |
-    - no
-    - n
-    - never
-    - I don't think so
-    - don't like that
-    - no way
-    - not really
-- intent: mood_great
-  examples: |
-    - perfect
-    - great
-    - amazing
-    - feeling like a king
-    - wonderful
-    - I am feeling very good
-    - I am great
-    - I am amazing
-    - I am going to save the world
-    - super stoked
-    - extremely good
-    - so so perfect
-    - so good
-    - so perfect
-- intent: mood_unhappy
-  examples: |
-    - my day was horrible
-    - I am sad
-    - I don't feel very well
-    - I am disappointed
-    - super sad
-    - I'm so sad
-    - sad
-    - very sad
-    - unhappy
-    - not good
-    - not very good
-    - extremly sad
-    - so saad
-    - so sad
-- intent: bot_challenge
-  examples: |
-    - are you a bot?
-    - are you a human?
-    - am I talking to a bot?
-    - am I talking to a human?
-- intent: submit_complaint
-  examples: |
-    - My toilet will not flush
-    - The lights are not working
-    - I have a power outage
-    - Someone tried to break in
-    - The garbage is not collected
-    - The window is stuck
-    - The door does not close properly
-    - The thermostat is broken
+  - intent: view_my_complaints
+    examples: |
+      - show my complaints
+      - list my complaints
+      - what are my complaints
+      - my complaint history
+      - show all my reports
+      - check my complaints
+      - do I have any complaints
+      - what complaints have I submitted
+      - view my complaints
+      - see my complaints
+      - my complaints status
+      - show complaints
+      - all my complaints
+      - display my complaints
+      - I want to see my complaints
+      - can I see my complaints
+      - show me my complaints list
+      - what complaints did I make
+      - complaints I submitted
+      - my reports
+      - check status of all complaints
+      - voir mes réclamations
+      - afficher mes réclamations
+      - mes réclamations
+      - liste de mes réclamations
+      - historique réclamations
+      - show my last complaint
+      - my last complaint
+      - latest complaint
+      - most recent complaint
+      - last [3](complaint_count) complaints
+      - show last [5](complaint_count) complaints
+      - my last [10](complaint_count) complaints
+      - show [2](complaint_count) complaints
+      - recent [7](complaint_count) complaints
+      - latest [4](complaint_count) complaints
+      - first complaint
+      - oldest complaint
+      - show first [2](complaint_count) complaints
+      - oldest [3](complaint_count) complaints
+      
+  - intent: check_complaint_status 
+    examples: |
+      - check status of complaint [123](complaint_id)
+      - what's the status of [456](complaint_id)
+      - complaint [789](complaint_id) status
+      - check complaint [12](complaint_id)
+      - status of my complaint [34](complaint_id)
+      - how is complaint [56](complaint_id) going
+      - check status [78](complaint_id)
+      - status complaint [90](complaint_id)
+      - where is my complaint [111](complaint_id)
+      - complaint number [222](complaint_id)
+      - check [5](complaint_id)
+      - status [17](complaint_id)
+      - complaint [99](complaint_id)
+      - what about complaint [44](complaint_id)
+      - tell me about [88](complaint_id)
+      - number [77](complaint_id)
+      - show complaint [33](complaint_id)
+      - details of [66](complaint_id)
+      - info on complaint [22](complaint_id)
+      - réclamation [11](complaint_id)
+      - statut réclamation [55](complaint_id)
+      - numéro [44](complaint_id)
 
-- intent: provide_details
-  examples: |
-    - [Toilet blocked](compl_title) since last night. [Nothing goes down when I flush](compl_description).
-    - [Lights not working](compl_title) in the living room. [Even after changing bulbs](compl_description).
-    - [Power outage](compl_title) in the kitchen. [No appliance works for two hours](compl_description).
-    - [Main door lock forced](compl_title). [Does not close properly now](compl_description).
-    - [Garbage not collected](compl_title) in the hallway. [Smells bad for three days](compl_description).
-    - [Bedroom window jammed](compl_title). [Won't open no matter how hard I try](compl_description).
-    - [Front door gap](compl_title). [Does not close fully even when locked](compl_description).
-    - [Mold near window](compl_title). [Due to constant humidity](compl_description).
-    
-- intent: upload_attachment
-  examples: |
-    - Here is a picture
-    - Here is the video of the problem
-    - I am sending you a picture
-    - I want to upload a photo
-    - Uploading a video now
-    - Please see this photo
-    - I have attached an image
-    - Look at this video
-    - Sending you the picture now
-    - Here is a file
-- intent: ask_status
-  examples: |
-    - What is the status of my complaint?
-    - I want to know the current state of my complaint
-    - Can you tell me the progress of my request?
-    - Where is my request at?
-    - Is there any update on my complaint?
-    - Can you give me the status of my request?
-    - I would like to check the status of my complaint
-    - What's going on with my ticket?
-    - What happened with my last complaint?
-    - Has my request been processed?
-    - What is the progress on my issue?
-    - How is my complaint being handled?
-    - What is the follow-up on my request?
-    - Please give me an update on my complaint
-    - Can I know the complaint status?
-    - Any news about my ticket?
-    - Where does my complaint stand?
-    - What is the situation of my complaint?
-    - Tell me about the resolution status of my problem
-    - I want to check my complaint status
-
-- intent: provide_complaint_id
-  examples: |
-    - My complaint number is [123](complaint_id)
-    - The ticket [4](complaint_id)
-    - The number is [789](complaint_id)
-    - [101112](complaint_id)
-    - [Power outage](compl_title) in apartment 8. [No electricity since yesterday](compl_description).
-    - [Water leak](compl_title) in the bathroom. [The pipe is leaking heavily](compl_description).
-    - [Broken heater](compl_title). [It doesn’t turn on anymore](compl_description).
-    - [No hot water](compl_title) since this morning. [I can't shower](compl_description).
-    - I have a [window issue](compl_title). [The window doesn't close and it's cold](compl_description).
-
-- intent: image_upload
-  examples: |
-      - Uploaded an image
+  - regex: complaint_id
+    examples: |
+      - \d+
+  - regex: complaint_count
+    examples: |
+      - \b([1-9]|[1-4][0-9]|50)\b

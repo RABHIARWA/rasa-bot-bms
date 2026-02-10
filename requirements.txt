@@ -1,0 +1,16 @@
+# Rasa Framework
+#rasapro==3.13.12
+# Database
+sqlalchemy>=2.0.0
+
+# Cloud Storage (Backblaze B2/S3)
+boto3>=1.28.0
+
+# HTTP Requests
+requests>=2.31.0
+
+# OpenAI
+openai>=1.0.0
+
+# Additional utilities (if needed)
+python-dotenv>=1.0.0

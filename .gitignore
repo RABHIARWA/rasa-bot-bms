@@ -128,7 +128,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-**/models/*.tar.gz
+#**/models/*.tar.gz
 .vscode 
 */story_graph.dot
 *.ipynb

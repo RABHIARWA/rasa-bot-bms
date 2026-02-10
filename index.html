@@ -1,111 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Rasa & Flask Chatbot</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <head>
+        <meta charset="UTF-8">
+        <title>Rasa & Flask Chatbot</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div class="container">
+            <h1></h1>
 
-    <style>
-        .chat-sign-button {
-            width: 50px;
-            height: 50px;
-            font-size: 24px;
+            <!-- Bouton d'ouverture du chat -->
+            <button id="chat-widget-button" type="button"
+                class="btn btn-primary rounded-circle position-fixed chat-sign-button"
+                style="bottom: 20px; right: 20px;">💬</button>
+
+            <!-- Chatbox -->
+            <div id="chat-widget" class="card position-fixed shadow d-none"
+                style="bottom: 100px; right: 20px; width: 300px;">
+                <div class="card-header bg-primary text-white">
+                    Chatbot
+                    <button id="chat-widget-close-button" type="button"
+                        class="btn-close float-end" aria-label="Close"></button>
+                </div>
+
+                <div class="messages" id="chat-widget-messages">
+                    <!-- Messages affichés ici -->
+                </div>
+
+                <div class="card-footer d-flex align-items-center gap-2">
+                    <!-- Champ upload (invisible) -->
+                    <input type="file" id="image-upload" accept="image/*"
+                        style="display: none;">
+
+                    <!-- Bouton 📎 -->
+                    <button id="upload-button"
+                        class="btn btn-secondary btn-sm">📎</button>
+
+                    <!-- Champ message -->
+                    <input type="text" class="form-control"
+                        id="chat-widget-input"
+                        placeholder="Type your message...">
+                </div>
+            </div>
+
+        </div>
+
+        <script>
+            const $messages = document.getElementById("chat-widget-messages");
+            const RASA_URL = "http://localhost:5005";
+            function addUserBubble(text) {
+                if (!text) return;
+                const row = document.createElement("div");
+                row.className = "row user";
+                const b = document.createElement("div");
+                b.className = "bubble user";
+                b.textContent = text;
+                row.appendChild(b);
+                $messages.appendChild(row);
+                $messages.scrollTop = $messages.scrollHeight;
+            }
+            function addBotMessage(msg) {
+                const row = document.createElement("div");
+                row.className = "row bot";
+                const b = document.createElement("div");
+                b.className = "bubble bot";
+
+                if (msg.text) {
+                    const p = document.createElement("div");
+                    p.textContent = msg.text;
+                    b.appendChild(p);
+                }
+
+                if (msg.image) {
+                    const img = document.createElement("img");
+                    img.className = "msg-image";
+                    img.src = msg.image;
+                    img.alt = "";
+                    b.appendChild(img);
+                }
+
+                if (Array.isArray(msg.buttons) && msg.buttons.length) {
+                    const container = document.createElement("div");
+                    container.className = "buttons";
+                    msg.buttons.forEach(btn => {
+                        const el = document.createElement("button");
+                        el.type = "button";
+                        el.textContent = btn.title ?? btn.payload ?? "Choose";
+                        el.setAttribute("data-payload", btn.payload ?? btn.title ?? "");
+                        el.addEventListener("click", (e) => {
+                        // 1) Disable all sibling buttons to avoid double clicks
+                        container.querySelectorAll("button").forEach(b => b.disabled = true);
+
+                        // 2) Echo the chosen title as user's message (optional)
+                        // addUserBubble(btn.title ?? "");
+
+                        // 3) Send the payload back to the bot
+                        const payload = el.getAttribute("data-payload");
+                        console.log("payload ", payload);
+                        if (payload) {
+                            sendPayload(payload);
+                        }
+                        });
+                        container.appendChild(el);
+                        });
+                        b.appendChild(container);
+                }
+
+                row.appendChild(b);
+                $messages.appendChild(row);
+                $messages.scrollTop = $messages.scrollHeight;
         }
+            function sendPayload(payload) {
+                fetch(RASA_URL.replace(/\/$/, "") + "/webhooks/rest/webhook", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                sender: "user",
+                message: payload, // 👈 intent name
+                })
+                })
+                .then(r => r.json())
+                .then(data => data.forEach(addBotMessage))
+                .catch(err => {
+                addBotMessage({ text: "⚠️ Could not reach bot: " + err.message });
+                });
+            }
+$(document).ready(function () {
+    
 
-        #chat-widget {
-            max-height: 400px; /* Set the maximum height you desire */
-            overflow-y: auto; /* Enable vertical scrolling when content exceeds the container height */
+    // Ouvrir / fermer le chat
+    $("#chat-widget-button").on("click", function () {
+        $("#chat-widget").toggleClass("d-none");
+    });
+
+    $("#chat-widget-close-button").on("click", function () {
+        $("#chat-widget").addClass("d-none");
+    });
+
+    // Envoi de message texte
+    $("#chat-widget-input").keypress(function (event) {
+        if (event.which === 13) {
+            let userMessage = $("#chat-widget-input").val();
+            $("#chat-widget-input").val("");
+
+            // Affiche le message utilisateur
+            addUserBubble(userMessage);
+           
+            // Envoi au bot Rasa
+            $.ajax({
+                type: "POST",
+                url:"http://localhost:5005/webhooks/rest/webhook",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    sender: "user",
+                    message: userMessage
+                }),
+                success: function (data) {
+                    console.log("Réponse brute de Rasa :", data);
+                    let botResponse = "";
+                    if (data && data.length > 0) {
+                        for (let i in data) {
+                            console.log("msg: ", data[i]);
+                            addBotMessage(data[i]);
+                        }
+                    } else {
+                        addBotMessage( {text:"Pas de réponse texte du bot."});
+                    }
+                },
+                error: function (err) {
+                    console.error("Erreur :", err);
+                }
+            });
         }
+    });
 
-        /* CSS Styling for Chat Messages */
-        #chat-widget-messages {
-        /* Set a margin to allow space for the scrollbar without obscuring content */
-        margin-right: 15px;
-}
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Welcome to My Chatbot!</h1>
-        <!-- Chat widget button -->
+    // Bouton 📎 déclenche l’upload
+    $("#upload-button").on("click", function () {
+        $("#image-upload").click();
+    });
 
-        <button id="chat-widget-button" type="button" class="btn btn-primary rounded-circle position-fixed chat-sign-button" style="bottom: 20px; right: 20px;"></button>
+    // Upload d’image
+    $("#image-upload").on("change", function (event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-        <!-- Chatbox -->
-        <div id="chat-widget" class="card position-fixed shadow d-none" style="bottom: 100px; right: 20px; width: 300px;">
-            <div class="card-header bg-primary text-white">
-                Chatbot
-                <button id="chat-widget-close-button" type="button" class="btn-close float-end" aria-label="Close"></button>
-            </div>
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const base64Image = e.target.result;
 
-            <div class="card-body" id="chat-widget-messages">
-                <!-- Chat messages will be appended here -->
-            </div>
+            // Affiche l'image dans le chat
+            $("#chat-widget-messages").append(
+                `<div><img src="${base64Image}" style="max-width: 100%; max-height: 200px;"></div>`
+            );
 
-            <div class="card-footer">
-                <input type="text" class="form-control" id="chat-widget-input" placeholder="Type your message...">
-            </div>
-
-    </div>
-    </div>
-
-<script>
-    $(document).ready(function() {
-        $("#chat-widget-button").on("click", function() {
-            $("#chat-widget").toggleClass("d-none")
-
-        });
-
-        $("#chat-widget-close-button").on("click", function() {
-            $("#chat-widget").addClass("d-none")
-
-        });
-
-        // Handle user input in the chatbox
-        $("#chat-widget-input").keypress(function(event) {
-            if(event.which === 13) {
-                let userMessage = $("#chat-widget-input").val();
-                $("#chat-widget-input").val("")
-
-             // Append user message to the chatbox
-            $("#chat-widget-messages").append("<div><strong>You:</strong> " + userMessage + "</div>");
-
-
-             // Send user message to the server and get bot's response
-
+            // Envoie l'image au bot
             $.ajax({
                 type: "POST",
                 url: "http://localhost:5005/webhooks/rest/webhook",
                 contentType: "application/json",
-                data: JSON.stringify({ message: userMessage }),
-                success: function(data) {
+                data: JSON.stringify({
+                    sender: "user",
+                    message: "Voici mon image",   // plus besoin de /intent
+                    metadata: {
+                        uploaded_image_url: base64Image,
+                        image_uploaded: true   // le slot sera rempli par from_metadata
+                    }
+                     
+                }),
+                success: function (data) {
                     console.log("Réponse brute de Rasa :", data);
-                    let botResponse = data[0]?.text || "Pas de réponse texte du bot.";
-           
-                    // Append bot's response to the chatbox
-                    $("#chat-widget-messages").append("<div><strong>Bot:</strong> " + botResponse + "</div>");
-
-
-                },
-
-                error: function() {
-                            // Handle error if needed
+                    let botResponse = "";
+                    if (data && data.length > 0) {
+                        for (let i in data) {
+                            console.log("msg: ", data[i]);
+                            addBotMessage(data[i]);
                         }
-
-
+                    } else {
+                        addBotMessage( {text:"Pas de réponse texte du bot."});
+                    }
+                },
+                error: function (err) {
+                    console.error("Erreur :", err);
+                }
             });
+            // Réinitialise l’input
+            $("#image-upload").val("");
+        };
 
-
-            }
-
-
-        });
-
+        reader.readAsDataURL(file);
     });
 
-
+});
 </script>
-
-</body>
-</html>

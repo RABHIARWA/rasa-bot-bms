@@ -1,0 +1,162 @@
+.rasa-chat-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 73px;
+  border-top: 1px solid var(--color-secondary-20);
+  background-color: var(--input-background-color);
+
+  &__input {
+    margin: 24px;
+    outline: none;
+    border: none;
+    width: 100%;
+    background-color: transparent;
+    color: var(--input-color);
+    font-family: var(--font-family);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+    letter-spacing: 0.6px;
+
+    @include placeholder {
+      color: var(--input-placeholder-color);
+      opacity: var(--input-placeholder-opacity);
+      font-family: var(--font-family);
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 150%;
+      letter-spacing: 0.6px;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__button {
+    outline: none;
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+    display: flex;
+    width: 73px;
+    height: 73px;
+    padding: 25px 24px 24px 25px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__icon {
+    width: 23px;
+    height: 23px;
+    color: var(--input-send-color);
+
+
+  }
+}
+
+.chat {
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+.messages {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 300px;
+  scroll-behavior: smooth;
+}
+
+.row {
+  display: flex;
+}
+
+.bot {
+  justify-content: flex-start;
+}
+
+.user {
+  justify-content: flex-end;
+}
+
+.bubble {
+  max-width: 75%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  line-height: 1.35;
+}
+
+.bubble.bot {
+  background: #fff;
+  border: 1px solid #e6e8ef;
+}
+
+.bubble.user {
+  background-color: #2b66f6;
+  color: #fff;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.buttons button {
+  border: 1px solid #cfd3e0;
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.buttons button[disabled] {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.composer {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid #e6e8ef;
+  background: #fff;
+}
+
+.composer input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #cfd3e0;
+  border-radius: 8px;
+}
+
+.composer button {
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #2b66f6;
+  color: #fff;
+  cursor: pointer;
+}
+
+img.msg-image {
+  max-width: 320px;
+  border-radius: 8px;
+  display: block;
+  margin-top: 8px;
+}
+body { 
+  font-family: system-ui, Arial, sans-serif; margin: 0; background:#f6f7fb; 
+}

@@ -1,99 +1,322 @@
-version: '3.1'
-intents:
-- affirm
-- ask_status
-- bot_challenge
-- deny
-- goodbye
-- greet
-- mood_great
-- mood_unhappy
-- provide_complaint_id
-- provide_details
-- submit_complaint
-- upload_attachment
+version: "3.1"
 
+intents:
+  - set_employee
+  - view_my_complaints  
+  - check_complaint_status  
 
 entities:
-- complaint_id
-- compl_title
-- compl_description
-- image
+  - selected_employee_name
+  - assigned_employee_id
+  - assigned_employee_email
+  - complaint_id             
+  - complaint_count 
 
 slots:
+  complaint_title:
+    type: text
+    mappings:
+      - type: from_llm
+        llm:
+          type: "openai"
+          model: "gpt-3.5-turbo"
+          prompt: |
+            Extract a brief complaint title (max 50 characters) from this message.
+            Focus on the main issue. Be concise and clear.
+
+            User message: "{user_input}"
+
+            Return only the title:
+
+  complaint_description:
+    type: text
+    mappings:
+      - type: from_llm
+        llm:
+          type: "openai"
+          model: "gpt-3.5-turbo"
+          temperature: 0
+          prompt: |
+            Paraphrase the user's latest message into a neutral 1–2 sentence
+            complaint description (max 400 characters). Avoid personal data.
+            Do NOT copy phrases verbatim; reword everything.
+            
+            User message: "{user_input}"
+            
+            Return ONLY valid JSON following this schema:
+            {{"description": "your paraphrased description here"}}
+          output_schema:
+            type: object
+            properties:
+              description:
+                type: string
+                maxLength: 400
+            required: [description]
+          result_key: description
+          
+  complaint_description_rephrased:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+  complaint_type:
+    type: categorical
+    values:
+      - "Electricity failure"
+      - "Plumbing failure"
+      - "Technical failure"
+      - "Caretaker failure"
+    influence_conversation: false
+    mappings:
+      - type: from_llm
+        llm:
+          type: openai
+          model: gpt-4o-mini
+          temperature: 0
+          prompt: |
+            Classify the complaint into EXACTLY one of these categories:
+            - "Electricity failure": Power outages, electrical issues, lighting problems
+            - "Plumbing failure": Water leaks, drainage issues, toilet/sink problems
+            - "Technical failure": Heating/cooling, elevator, door locks, appliances
+            - "Caretaker failure": Cleaning, maintenance neglect, garbage collection
+            
+            Return ONLY valid JSON per the schema.
+          output_schema:
+            type: object
+            properties:
+              ctype:
+                type: string
+                enum:
+                  - "Electricity failure"
+                  - "Plumbing failure"
+                  - "Technical failure"
+                  - "Caretaker failure"
+            required: [ctype]
+          result_key: ctype
+
+  want_upload:
+    type: bool
+    mappings:
+      - type: from_llm
+
+  image_uploaded:
+    type: bool
+    initial_value: false
+    mappings:
+      - type: custom
+
+  uploaded_image_url:
+    type: text
+    initial_value: null
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+  image_match:
+    type: bool
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+  image_mismatch_reason:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+  confirm_use_image:
+    type: bool
+    influence_conversation: false
+    mappings:
+      - type: controlled
+
+
+  confirm_submit:
+    type: bool
+    influence_conversation: false
+    mappings:
+      - type: from_llm
+
+  complaint_solution:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+
   complaint_id:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: complaint_id
-      
-  compl_title:
+      - type: from_entity
+        entity: complaint_id
+
+  assigned_employee_id:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: assigned_employee_id 
+      - type: custom  
+  selected_employee_name:
     type: text
     influence_conversation: false
     mappings:
       - type: from_entity
-        entity: compl_title
+        entity: selected_employee_name   
+      - type: custom
 
-  compl_type:
+  assigned_employee_email:
     type: text
+    influence_conversation: false
     mappings:
       - type: from_entity
-        entity: compl_type   
+        entity: assigned_employee_email
 
-  compl_description:
+  available_employees:
     type: text
+    influence_conversation: false
+    initial_value: "[]"
+    mappings:
+      - type: custom
+
+  required_role:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+  awaiting_employee_selection:
+    type: bool
+    initial_value: false
+    mappings:
+      - type: custom
+
+  employees_shown:
+    type: bool
+    initial_value: false
+    influence_conversation: false
+    mappings:
+      - type: custom
+  solution_satisfactory:   
+    type: bool
+    influence_conversation: false
+    mappings:
+      - type: from_llm
+  image_confirmation:    # NEW
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+  complaint_count:
+    type: text   # or: any
     influence_conversation: true
     mappings:
       - type: from_entity
-        entity: compl_description
-
- 
-  
-
-
-actions:
-- utter_give_details_complaint
-- utter_greet
-- utter_confirm_submission
-- utter_accept_upload
-- action_save_complaint
-- utter_ask_upload
-- action_extract_image
-- action_check_status_complaint
-- action_check_if_simple
-- action_store_complaint
-
-
+        entity: complaint_count
 
 responses:
   utter_greet:
-  - text: Hey! How are you?
+    - text: "Hey! How are you?"
+
   utter_cheer_up:
-  - text: 'Here is something to cheer you up:'
-    image: https://i.imgur.com/nGF1K8f.jpg
+    - text: "Here is something to cheer you up:"
+      image: https://i.imgur.com/nGF1K8f.jpg
+
   utter_did_that_help:
-  - text: Did that help you?
+    - text: "Did that help you?"
+
   utter_happy:
-  - text: Great, carry on!
+    - text: "Great, carry on!"
+
   utter_goodbye:
-  - text: Bye
+    - text: "Bye"
+
   utter_iamabot:
-  - text: I am a bot, powered by Rasa.
-  utter_give_details_complaint:
-  - text: Can you give more information regarding the problem?
-  utter_ask_upload:
-  - text: "Would you like to attach a photo or a video of the problem?"
-  utter_ask_upload_instruction:
-  - text: "Please upload the image or video using the 📎 button below."
-  utter_thanks_upload:
-  - text: "Thanks for the media! We'll take a closer look."
-  utter_accept_upload:
-  - text: Thank you! This will help better understand the problem
-  utter_confirm_submission:
-  - text: Your request has been saved. We will inform you as soon as we review your request
-  utter_ask_complaint_id:
-  - text: Please provide your complaint ID so I can check the status.
-session_config:
-  session_expiration_time: 60
-  carry_over_slots_to_new_session: true
+    - text: "I am a bot, powered by Rasa."
+
+  utter_start_complaint:
+    - text: "Okay, let's submit your complaint."
+
+  utter_ask_complaint_title:
+    - text: "What is a short title for the issue?"
+
+  utter_ask_complaint_description:
+    - text: "Please describe the problem."
+
+  utter_ask_complaint_type:
+    - text: "What type of issue is it?"
+
+  utter_ask_upload_image:
+    - text: "Do you want to add a photo?"
+      buttons:
+        - title: "Yes"
+          payload: "/SetSlots(want_upload=true)"
+        - title: "No"
+          payload: "/SetSlots(want_upload=false)"
+
+  utter_request_image_upload:
+    - text: "Please upload a photo now using the 📷 Upload button."
+
+  utter_ask_confirm_use_image:
+    - text: |
+        ⚠️ The uploaded photo may not match your complaint description.
+        Reason: {image_mismatch_reason}
+
+        Do you want to keep this photo?
+      buttons:
+        - title: "✅ Yes, keep it"
+          payload: "/SetSlots(confirm_use_image=true)"
+        - title: "🔄 No, upload again"
+          payload: "/SetSlots(confirm_use_image=false)"
+
+  utter_confirm_submit:
+    - text: "Do you want to submit this complaint?"
+      buttons:
+        - title: "Yes, submit"
+          payload: "/SetSlots(confirm_submit=true)"
+        - title: "No, cancel"
+          payload: "/SetSlots(confirm_submit=false)"
+
+  utter_cancel_submission:
+    - text: "Okay, I have canceled the submission."
+
+  utter_submit_done:
+    - text: "Thanks! Your complaint has been submitted. 🛠️"
+
+  utter_display_solution:
+    - text: "{complaint_solution}"
+
+  utter_ask_complaint_id:  
+    - text: "Please provide the complaint ID number (e.g., 123)."
+    
+  utter_ask_selected_employee_name:
+    - text: "Please choose an employee from the list above."
+
+  utter_ask_solution_satisfactory:    
+    - text: "Does this solution help you? Would you like to proceed with it?"
+      buttons:
+        - title: "Yes, this solves my problem"
+          payload: "/SetSlots(solution_satisfactory=true)"
+        - title: "No, I need assistance"
+          payload: "/SetSlots(solution_satisfactory=false)"
+  
+  utter_request_image_upload_and_wait:    # NEW
+    - text: "Please upload a photo now using the 📷 Upload button.\n\nAfter uploading, type 'done' or send any message to continue."
+  utter_ask_complaint_count:
+    - text: "How many complaints do you want to see?"
+
+actions:
+  - action_infer_complaint_type
+  - action_validate_complaint_type
+  - action_extract_image_from_metadata
+  - action_summarize_complaint
+  - action_submit_complaint_resolved   
+  - action_submit_complaint_pending      
+  - action_propose_complaint_solution
+  - action_check_status_complaint
+  - action_list_user_complaints     
+  - action_check_complaint_status      
+  - action_fetch_employees_and_wait
+  - action_select_employee
+  - action_validate_image_matches_description
+  - action_reset_uploaded_image
