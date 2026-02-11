@@ -138,3 +138,4 @@ dmypy.json
 *.db-wal
 
 **/.rasa
+models/
